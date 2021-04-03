@@ -20,7 +20,7 @@ A game where discord users tries to guess the word
 * Clone the repo
 * Configure the Discord token and the MongoDB connection string
 * Build the solution
-* Execute the Nexinho.Service.dll
+* Execute the Nexinho.dll
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
