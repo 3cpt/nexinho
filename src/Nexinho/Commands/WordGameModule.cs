@@ -165,11 +165,11 @@ namespace Nexinho.Commands
 
                     if (sorted.Count > 1)
                     {
-                        sb.AppendLine($"{emoji1st} - {sorted[1].Username} - {sorted[1].Points} pontos");
+                        sb.AppendLine($"{emoji2nd} - {sorted[1].Username} - {sorted[1].Points} pontos");
 
                         if (sorted.Count > 2)
                         {
-                            sb.AppendLine($"{emoji1st} - {sorted[2].Username} - {sorted[2].Points} pontos");
+                            sb.AppendLine($"{emoji3rd} - {sorted[2].Username} - {sorted[2].Points} pontos");
                         }
                     }
                 }
