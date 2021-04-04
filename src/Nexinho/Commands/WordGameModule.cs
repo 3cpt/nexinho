@@ -1,5 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
@@ -57,7 +57,7 @@ namespace Nexinho.Commands
                     var emoji = DiscordEmoji.FromName(ctx.Client, ":trophy:");
 
                     await ctx.Message.CreateReactionAsync(emoji);
-                    await ctx.RespondAsync($"Parabéns, a palavra era {current.Value}");
+                    await ctx.RespondAsync($"Parabéns, a palavra era mesmo {current.Value}");
 
                     current.Current = false;
                     current.Solved = true;
@@ -83,12 +83,21 @@ namespace Nexinho.Commands
 
                     await this.wordService.UpdateCurrentRanking(ranking);
                 }
+                else if (current.Value == current.Mask)
+                {
+                    current.Current = false;
+                    current.Solved = true;
+
+                    await this.wordService.UpdateWord(current);
+
+                    await ctx.RespondAsync($"Não. E já não há mais pistas. A palavra era: {current.Mask}");
+                }
                 else
                 {
                     current.Mask = current.Mask.Remask(current.Value);
 
                     await this.wordService.UpdateWord(current);
-                    await ctx.RespondAsync($"Parabéns, a palavra era {current.Mask}");
+                    await ctx.RespondAsync($"Não. Nova letra: {current.Mask}");
                 }
             }
             else
@@ -123,6 +132,53 @@ namespace Nexinho.Commands
             else
             {
                 await ctx.RespondAsync("Ops, a palavra já existe");
+            }
+        }
+
+        [Command("ranking")]
+        public async Task RankingCommand(CommandContext ctx)
+        {
+            await ctx.TriggerTypingAsync();
+
+            var emoji1st = DiscordEmoji.FromName(ctx.Client, ":first_place:");
+            var emoji2nd = DiscordEmoji.FromName(ctx.Client, ":second_place:");
+            var emoji3rd = DiscordEmoji.FromName(ctx.Client, ":third_place:");
+
+
+            var ranking = await this.wordService.GetCurrentRanking();
+
+            if (ranking != null)
+            {
+                var sb = new StringBuilder();
+
+                sb.Append($"Ranking - {ranking.Id}:");
+
+                if (ranking.Ranks == null || ranking.Ranks.Count <= 0)
+                {
+                    sb.AppendLine($"{emoji1st} - ninguém");
+                }
+                else
+                {
+                    var sorted = ranking.Ranks.OrderByDescending(o => o.Points).ToList();
+
+                    sb.AppendLine($"{emoji1st} - {sorted[0].Username} - {sorted[0].Points} pontos");
+
+                    if (sorted.Count > 1)
+                    {
+                        sb.AppendLine($"{emoji1st} - {sorted[1].Username} - {sorted[1].Points} pontos");
+
+                        if (sorted.Count > 2)
+                        {
+                            sb.AppendLine($"{emoji1st} - {sorted[2].Username} - {sorted[2].Points} pontos");
+                        }
+                    }
+                }
+
+                await ctx.RespondAsync(sb.ToString());
+            }
+            else
+            {
+                await ctx.RespondAsync("Ops, não há ranking");
             }
         }
     }

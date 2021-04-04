@@ -65,6 +65,8 @@ namespace Nexinho.Services
             {
                 var ranking = new Ranking { Id = $"{DateTime.Now.Year}-{DateTime.Now.Month}", Ranks = new List<Rank>() };
 
+                await this.rankingDatabase.InsertOneAsync(ranking);
+
                 return ranking;
             }
 

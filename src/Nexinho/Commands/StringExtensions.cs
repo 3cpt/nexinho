@@ -30,14 +30,24 @@ namespace Nexinho.Commands
         {
             Random rand = new();
 
-            int num = rand.Next(0, mask.Length - 1);
+            int num = -1;
+
+            while (num == -1 || mask[num] != '-')
+            {
+                num = rand.Next(0, mask.Length);
+            }
+
             StringBuilder sb = new();
 
             for (int i = 0; i < mask.Length; i++)
             {
                 if (i == num)
                 {
-                    sb.Append(word[num]);
+                    sb.Append(word[i]);
+                }
+                else if (mask[i] == word[i])
+                {
+                    sb.Append(word[i]);
                 }
                 else
                 {
