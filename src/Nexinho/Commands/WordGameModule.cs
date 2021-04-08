@@ -23,7 +23,7 @@ namespace Nexinho.Commands
 
             if (current != null)
             {
-                await ctx.RespondAsync($"A palavra é: {current.Mask}");
+                await ctx.RespondAsync($"A palavra é: *{current.Mask}*");
             }
             else
             {
@@ -55,29 +55,29 @@ namespace Nexinho.Commands
                 if (current.Value.ToUpper() == word1.ToUpper())
                 {
                     var emoji = DiscordEmoji.FromName(ctx.Client, ":trophy:");
+                    var points = current.Mask.Count(f => f == '-');
 
                     await ctx.Message.CreateReactionAsync(emoji);
-                    await ctx.RespondAsync($"Parabéns, a palavra era mesmo {current.Value}");
+                    await ctx.RespondAsync($"Yes, a palavra era mesmo *{current.Value}* ({points} pontos)");
 
                     current.Current = false;
                     current.Solved = true;
 
                     await this.wordService.UpdateWord(current);
 
+
                     var ranking = await this.wordService.GetCurrentRanking();
 
                     if (ranking.Ranks.Any(r => r.Username == ctx.Message.Author.Username))
                     {
-                        ranking.Ranks.First(r => r.Username == ctx.Message.Author.Username).Points
-                            = current.Mask.Count(f => f == '-');
+                        ranking.Ranks.First(r => r.Username == ctx.Message.Author.Username).Points = points;
                     }
                     else
                     {
                         ranking.Ranks.Add(new Rank
                         {
                             Username = ctx.Message.Author.Username,
-                            Points
-                            = current.Mask.Count(f => f == '-')
+                            Points = points
                         });
                     }
 
@@ -151,11 +151,11 @@ namespace Nexinho.Commands
             {
                 var sb = new StringBuilder();
 
-                sb.Append($"Ranking - {ranking.Id}:");
+                sb.AppendLine($"{ranking.Id}");
 
                 if (ranking.Ranks == null || ranking.Ranks.Count <= 0)
                 {
-                    sb.AppendLine($"{emoji1st} - ninguém");
+                    sb.AppendLine($"{emoji1st} - nobody");
                 }
                 else
                 {
