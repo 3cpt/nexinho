@@ -70,7 +70,7 @@ namespace Nexinho.Commands
 
                     if (ranking.Ranks.Any(r => r.Username == ctx.Message.Author.Username))
                     {
-                        ranking.Ranks.First(r => r.Username == ctx.Message.Author.Username).Points = points;
+                        ranking.Ranks.First(r => r.Username == ctx.Message.Author.Username).Points =+ points;
                     }
                     else
                     {
