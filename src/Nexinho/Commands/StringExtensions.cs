@@ -7,9 +7,9 @@ namespace Nexinho.Commands
     {
         public static string Mask(this string word)
         {
-            Random rand = new();
-            int num = rand.Next(0, word.Length - 1);
-            StringBuilder sb = new();
+            var rand = new Random();
+            var num = rand.Next(0, word.Length - 1);
+            var sb = new StringBuilder();
 
             for (int i = 0; i < word.Length; i++)
             {
@@ -28,7 +28,7 @@ namespace Nexinho.Commands
 
         public static string Remask(this string mask, string word)
         {
-            Random rand = new();
+            var rand = new Random();
 
             int num = -1;
 
@@ -37,7 +37,7 @@ namespace Nexinho.Commands
                 num = rand.Next(0, mask.Length);
             }
 
-            StringBuilder sb = new();
+            var sb = new StringBuilder();
 
             for (int i = 0; i < mask.Length; i++)
             {
