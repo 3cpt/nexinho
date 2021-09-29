@@ -1,3 +1,4 @@
+using System;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using Microsoft.Extensions.Configuration;
@@ -28,7 +29,13 @@ namespace Nexinho
                     var mongoClient = new MongoClient(botSettings.MongoConnection).GetDatabase(botSettings.DatabaseName);
 
                     services.AddSingleton(mongoClient);
-                    services.AddSingleton<IWordService, MongoService>();
+                    services.AddSingleton<IWordMongoService, WordMongoService>();
+                    services.AddSingleton<IChuckGateway, ChuckGateway>();
+
+                    services.AddHttpClient<IChuckGateway, ChuckGateway>(client =>
+                    {
+                        client.BaseAddress = new Uri("https://api.chucknorris.io/jokes/random");
+                    });
 
                     // dsharpplus
                     var discord = new DiscordClient(new DiscordConfiguration()
@@ -44,6 +51,7 @@ namespace Nexinho
                     });
 
                     commands.RegisterCommands<WordGameModule>();
+                    commands.RegisterCommands<PhrasesModule>();
 
                     services.AddSingleton(discord);
 
