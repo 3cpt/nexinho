@@ -3,7 +3,7 @@ using Nexinho.Models;
 
 namespace Nexinho.Services
 {
-    public interface IWordService
+    public interface IWordMongoService
     {
         Task<Word> GetCurrent();
 
@@ -16,5 +16,7 @@ namespace Nexinho.Services
         Task UpdateCurrentRanking(Ranking rank);
 
         Task UpdateWord(Word word);
+
+        Task Reset();
     }
 }

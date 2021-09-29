@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
+using Nexinho.Commands;
 using Nexinho.Models;
 
 namespace Nexinho.Services
 {
-    public class MongoService : IWordService
+    public class WordMongoService : IWordMongoService
     {
         private readonly IMongoCollection<Word> wordsDatabase;
         private readonly IMongoCollection<Ranking> rankingDatabase;
 
-        public MongoService(IMongoDatabase mongoDatabase)
+        public WordMongoService(IMongoDatabase mongoDatabase)
         {
             this.wordsDatabase = mongoDatabase.GetCollection<Word>("Words");
             this.rankingDatabase = mongoDatabase.GetCollection<Ranking>("Ranking");
@@ -55,22 +57,46 @@ namespace Nexinho.Services
             var result = await this.wordsDatabase.ReplaceOneAsync(filter, word);
         }
 
+        public async Task Reset()
+        {
+            var filter = Builders<Word>.Filter.Eq(w => w.Solved, true);
+
+            var all = await this.wordsDatabase.Find(filter).ToListAsync();
+
+            foreach (var word in all)
+            {
+                word.Mask = word.Value.Mask();
+                word.Solved = false;
+
+                var filter2 = Builders<Word>.Filter.Eq(w => w.Id, word.Id);
+                await this.wordsDatabase.ReplaceOneAsync(filter2, word, new ReplaceOptions { IsUpsert = true });
+            }
+        }
+
         public async Task<Ranking> GetCurrentRanking()
         {
             var filter = Builders<Ranking>.Filter.Eq(w => w.Id, $"{DateTime.Now.Year}-{DateTime.Now.Month}");
 
-            var current = await this.rankingDatabase.Find(filter).FirstOrDefaultAsync();
-
-            if (current == null)
+            try
             {
-                var ranking = new Ranking { Id = $"{DateTime.Now.Year}-{DateTime.Now.Month}", Ranks = new List<Rank>() };
+                var current = await this.rankingDatabase.Find(filter).FirstOrDefaultAsync();
 
-                await this.rankingDatabase.InsertOneAsync(ranking);
+                if (current == null)
+                {
+                    var ranking = new Ranking { Id = $"{DateTime.Now.Year}-{DateTime.Now.Month}", Ranks = new List<Rank>() };
 
-                return ranking;
+                    await this.rankingDatabase.InsertOneAsync(ranking);
+
+                    return ranking;
+                }
+
+                return current;
             }
+            catch (System.Exception ex)
+            {
 
-            return current;
+                throw;
+            }
         }
 
         public async Task UpdateCurrentRanking(Ranking rank)
