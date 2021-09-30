@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
@@ -12,7 +13,7 @@ namespace Nexinho.Commands
 {
     public class WordGameModule : BaseCommandModule
     {
-        public IWordService wordService { private get; set; }
+        public IWordMongoService wordService { private get; set; }
 
         [Command("word")]
         public async Task WordCommand(CommandContext ctx)
@@ -143,7 +144,6 @@ namespace Nexinho.Commands
             var emoji1st = DiscordEmoji.FromName(ctx.Client, ":first_place:");
             var emoji2nd = DiscordEmoji.FromName(ctx.Client, ":second_place:");
             var emoji3rd = DiscordEmoji.FromName(ctx.Client, ":third_place:");
-
 
             var ranking = await this.wordService.GetCurrentRanking();
 

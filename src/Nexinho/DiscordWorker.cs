@@ -16,7 +16,7 @@ namespace Nexinho
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-                await discordClient.ConnectAsync();
+            await discordClient.ConnectAsync();
         }
     }
 }
