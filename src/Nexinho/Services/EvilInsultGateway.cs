@@ -6,24 +6,24 @@ using Nexinho.Models;
 
 namespace Nexinho.Services
 {
-    public class ChuckGateway : IChuckGateway
+    public class EvilInsultGateway : IEvilInsultGateway
     {
         private readonly HttpClient httpClient;
 
-        public ChuckGateway(HttpClient httpClient)
+        public EvilInsultGateway(HttpClient httpClient)
         {
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        public async Task<ChuckJoke> Get()
+        public async Task<EvilInsult> Get()
         {
             try
             {
-                var responseString = await httpClient.GetStringAsync(httpClient.BaseAddress);
+                var response = await httpClient.GetStringAsync(httpClient.BaseAddress);
 
-                var joke = JsonSerializer.Deserialize<ChuckJoke>(responseString);
+                var insult = JsonSerializer.Deserialize<EvilInsult>(response);
 
-                return joke;
+                return insult;
             }
             catch (Exception ex)
             {
@@ -31,11 +31,6 @@ namespace Nexinho.Services
 
                 return null;
             }
-        }
-
-        public Task<ChuckJoke> GetByCategory(string category)
-        {
-            throw new NotImplementedException();
         }
     }
 }

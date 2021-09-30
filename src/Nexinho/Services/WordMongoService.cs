@@ -92,9 +92,8 @@ namespace Nexinho.Services
 
                 return current;
             }
-            catch (System.Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }

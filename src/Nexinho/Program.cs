@@ -37,6 +37,11 @@ namespace Nexinho
                         client.BaseAddress = new Uri("https://api.chucknorris.io/jokes/random");
                     });
 
+                    services.AddHttpClient<IEvilInsultGateway, EvilInsultGateway>(client =>
+                    {
+                        client.BaseAddress = new Uri("https://evilinsult.com/generate_insult.php?lang=en&type=json");
+                    });
+
                     // dsharpplus
                     var discord = new DiscordClient(new DiscordConfiguration()
                     {
