@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Nexinho.Commands;
 using Nexinho.Models;
@@ -11,12 +12,16 @@ namespace Nexinho.Services
     public class WordMongoService : IWordMongoService
     {
         private readonly IMongoCollection<Word> wordsDatabase;
+
         private readonly IMongoCollection<Ranking> rankingDatabase;
 
-        public WordMongoService(IMongoDatabase mongoDatabase)
+        private readonly ILogger logger;
+
+        public WordMongoService(IMongoDatabase mongoDatabase, ILogger<WordMongoService> logger)
         {
             this.wordsDatabase = mongoDatabase.GetCollection<Word>("Words");
             this.rankingDatabase = mongoDatabase.GetCollection<Ranking>("Ranking");
+            this.logger = logger;
         }
 
         public async Task<Word> GetCurrent()
@@ -73,7 +78,7 @@ namespace Nexinho.Services
             }
         }
 
-        public async Task<Ranking> GetCurrentRanking()
+        public async Task<Ranking> Get()
         {
             var filter = Builders<Ranking>.Filter.Eq(w => w.Id, $"{DateTime.Now.Year}-{DateTime.Now.Month}");
 
@@ -92,13 +97,15 @@ namespace Nexinho.Services
 
                 return current;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                logger.LogCritical(ex.Message);
+
+                return null;
             }
         }
 
-        public async Task UpdateCurrentRanking(Ranking rank)
+        public async Task Update(Ranking rank)
         {
             var filter = Builders<Ranking>.Filter.Eq(w => w.Id, rank.Id);
             var update = Builders<Ranking>.Update.Set(r => r.Ranks, rank.Ranks);

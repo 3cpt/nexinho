@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 using Nexinho.Services;
 
 namespace Nexinho.Commands
@@ -43,6 +44,21 @@ namespace Nexinho.Commands
             {
                 await ctx.RespondAsync(insult.Insult);
             }
+        }
+
+        [Command("pepe"), Aliases("feelsbadman"), Description("Feels bad, man.")]
+        public async Task Pepe(CommandContext ctx)
+        {
+            await ctx.TriggerTypingAsync();
+
+            // wrap it into an embed
+            var embed = new DiscordEmbedBuilder
+            {
+                Title = "Pepe",
+                ImageUrl = "http://i.imgur.com/44SoSqS.jpg"
+            };
+
+            await ctx.RespondAsync(embed);
         }
     }
 }
