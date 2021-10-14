@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>dotnet-Nexinho-DB02A814-3664-41DF-A2AA-4F94DB3BCB4F</UserSecretsId>
+    <RuntimeIdentifiers>linux-arm;osx-x64;linux-x64</RuntimeIdentifiers> 
   </PropertyGroup>
 
   <ItemGroup>
