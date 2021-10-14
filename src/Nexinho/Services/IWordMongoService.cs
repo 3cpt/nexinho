@@ -7,16 +7,16 @@ namespace Nexinho.Services
     {
         Task<Word> GetCurrent();
 
-        Task<Ranking> GetCurrentRanking();
-
         Task<Word> GetNext();
 
         Task<bool> InsertWord(Word word);
 
-        Task UpdateCurrentRanking(Ranking rank);
-
         Task UpdateWord(Word word);
 
         Task Reset();
+
+        Task Update(Ranking rank);
+
+        Task<Ranking> Get();
     }
 }

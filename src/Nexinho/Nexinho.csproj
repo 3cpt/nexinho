@@ -11,9 +11,15 @@
     <PackageReference Include="MongoDB.Driver" Version="2.12.1" />
     <PackageReference Include="DSharpPlus.Interactivity" Version="4.1.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <PackageReference Include="System.Runtime.Caching" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="DSharpPlus.Interactivity" />
     <None Remove="Microsoft.Extensions.Http" />
+    <None Remove="Microsoft.Extensions.Logging.Console" />
+    <None Remove="System.Runtime.Caching" />
+    <None Remove="Microsoft.Extensions.Caching.Memory" />
   </ItemGroup>
 </Project>

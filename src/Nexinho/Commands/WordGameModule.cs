@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
@@ -66,23 +65,7 @@ namespace Nexinho.Commands
 
                     await this.wordService.UpdateWord(current);
 
-
-                    var ranking = await this.wordService.GetCurrentRanking();
-
-                    if (ranking.Ranks.Any(r => r.Username == ctx.Message.Author.Username))
-                    {
-                        ranking.Ranks.First(r => r.Username == ctx.Message.Author.Username).Points += points;
-                    }
-                    else
-                    {
-                        ranking.Ranks.Add(new Rank
-                        {
-                            Username = ctx.Message.Author.Username,
-                            Points = points
-                        });
-                    }
-
-                    await this.wordService.UpdateCurrentRanking(ranking);
+                    await UpdateRank(ctx.Message.Author.Username, points);
                 }
                 else if (current.Value == current.Mask)
                 {
@@ -118,6 +101,26 @@ namespace Nexinho.Commands
             }
         }
 
+        private async Task UpdateRank(string username, int points)
+        {
+            var ranking = await this.wordService.Get();
+
+            if (ranking.Ranks.Any(r => r.Username == username))
+            {
+                ranking.Ranks.First(r => r.Username == username).Points += points;
+            }
+            else
+            {
+                ranking.Ranks.Add(new Rank
+                {
+                    Username = username,
+                    Points = points
+                });
+            }
+
+            await this.wordService.Update(ranking);
+        }
+
         [Command("add")]
         public async Task AddWordCommand(CommandContext ctx, string word)
         {
@@ -136,7 +139,7 @@ namespace Nexinho.Commands
             }
         }
 
-        [Command("ranking")]
+        [Command("rank-words")]
         public async Task RankingCommand(CommandContext ctx)
         {
             await ctx.TriggerTypingAsync();
@@ -145,7 +148,7 @@ namespace Nexinho.Commands
             var emoji2nd = DiscordEmoji.FromName(ctx.Client, ":second_place:");
             var emoji3rd = DiscordEmoji.FromName(ctx.Client, ":third_place:");
 
-            var ranking = await this.wordService.GetCurrentRanking();
+            var ranking = await this.wordService.Get();
 
             if (ranking != null)
             {

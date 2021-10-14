@@ -1,9 +1,15 @@
 using System;
+using System.Threading.Tasks;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.EventArgs;
+using DSharpPlus.Interactivity;
+using DSharpPlus.Interactivity.Enums;
+using DSharpPlus.Interactivity.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Nexinho.Commands;
 using Nexinho.Models;
@@ -30,7 +36,7 @@ namespace Nexinho
 
                     services.AddSingleton(mongoClient);
                     services.AddSingleton<IWordMongoService, WordMongoService>();
-                    services.AddSingleton<IChuckGateway, ChuckGateway>();
+                    services.AddSingleton<ITriviaMongoService, TriviaMongoService>();
 
                     services.AddHttpClient<IChuckGateway, ChuckGateway>(client =>
                     {
@@ -41,6 +47,8 @@ namespace Nexinho
                     {
                         client.BaseAddress = new Uri("https://evilinsult.com/generate_insult.php?lang=en&type=json");
                     });
+
+                    services.AddSingleton<IOpenTriviaGateway, OpenTriviaGateway>();
 
                     // dsharpplus
                     var discord = new DiscordClient(new DiscordConfiguration()
@@ -55,12 +63,34 @@ namespace Nexinho
                         Services = services.BuildServiceProvider()
                     });
 
+                    discord.UseInteractivity(new InteractivityConfiguration
+                    {
+                        PaginationBehaviour = PaginationBehaviour.Ignore,
+                        Timeout = TimeSpan.FromSeconds(30),
+                        ButtonBehavior = ButtonPaginationBehavior.DeleteButtons
+                    });
+
+                    discord.Ready += Discord_Ready;
+
                     commands.RegisterCommands<WordGameModule>();
                     commands.RegisterCommands<PhrasesModule>();
+                    commands.RegisterCommands<TriviaModule>();
 
                     services.AddSingleton(discord);
 
                     services.AddHostedService<DiscordWorker>();
-                });
+                })
+                .ConfigureLogging(logging =>
+                {
+                    logging.AddConsole();
+                })
+                ;
+
+        private static Task Discord_Ready(DiscordClient sender, ReadyEventArgs e)
+        {
+            sender.Logger.LogInformation("Client is ready to process events.");
+
+            return Task.CompletedTask;
+        }
     }
 }
