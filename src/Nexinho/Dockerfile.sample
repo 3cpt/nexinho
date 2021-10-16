@@ -1,17 +1,17 @@
 # https://hub.docker.com/_/microsoft-dotnet
-FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0-focal AS build
 WORKDIR /source
 
 # copy csproj and restore as distinct layers
 COPY *.csproj .
-RUN dotnet restore
+RUN dotnet restore -r linux-x64
 
 # copy and publish app and libraries
 COPY . .
-RUN dotnet publish -c release -o /app
+RUN dotnet publish -c release -o /app -r linux-x64 --self-contained false --no-restore /restore
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/runtime:3.1
+FROM mcr.microsoft.com/dotnet/runtime:6.0-focal-amd64
 WORKDIR /app
 COPY --from=build /app .
-ENTRYPOINT ["dotnet", "Nexinho.dll"]
+ENTRYPOINT ["./Nexinho"]
