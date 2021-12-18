@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Nexinho.Models;
 
-namespace Nexinho.Services;
+namespace Nexinho.Repositories;
 
 public interface IWordMongoService
 {

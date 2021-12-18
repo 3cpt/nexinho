@@ -2,10 +2,11 @@ using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 
-namespace Nexinho.Commands;
-public class MessageHelper
+namespace Nexinho.Extensions;
+
+public static class CommandContextExtensions
 {
-    public static async Task<DiscordMessage> SendMessageAsync(CommandContext ctx, string message)
+    public static async Task<DiscordMessage> SendMessage(this CommandContext ctx, string message)
     {
         await ctx.TriggerTypingAsync();
 

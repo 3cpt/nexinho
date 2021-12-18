@@ -2,7 +2,7 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
-using Nexinho.Services;
+using Nexinho.Gateways;
 
 namespace Nexinho.Commands
 {
