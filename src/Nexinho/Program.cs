@@ -15,8 +15,8 @@ using Nexinho.Commands;
 using Nexinho.Models;
 using Nexinho.Services;
 
-namespace Nexinho
-{
+namespace Nexinho;
+
     public class Program
     {
         public static void Main(string[] args)
@@ -35,8 +35,9 @@ namespace Nexinho
                     var mongoClient = new MongoClient(botSettings.MongoConnection).GetDatabase(botSettings.DatabaseName);
 
                     services.AddSingleton(mongoClient);
-                    services.AddSingleton<IWordMongoService, WordMongoService>();
-                    services.AddSingleton<ITriviaMongoService, TriviaMongoService>();
+                    services.AddSingleton<WordMongoService>();
+                    services.AddSingleton<TriviaMongoService>();
+                    services.AddSingleton<RankMongoService>();
 
                     services.AddHttpClient<IChuckGateway, ChuckGateway>(client =>
                     {
@@ -93,4 +94,3 @@ namespace Nexinho
             return Task.CompletedTask;
         }
     }
-}

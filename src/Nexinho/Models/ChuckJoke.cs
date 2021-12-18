@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Nexinho.Models
-{
+namespace Nexinho.Models;
+
     public class ChuckJoke
     {
         [JsonPropertyName("icon_url")]
@@ -16,4 +16,3 @@ namespace Nexinho.Models
         [JsonPropertyName("value")]
         public string Value { get; set; }
     }
-}

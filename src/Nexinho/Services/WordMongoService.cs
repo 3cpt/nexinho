@@ -13,14 +13,11 @@ namespace Nexinho.Services
     {
         private readonly IMongoCollection<Word> wordsDatabase;
 
-        private readonly IMongoCollection<Ranking> rankingDatabase;
-
         private readonly ILogger logger;
 
         public WordMongoService(IMongoDatabase mongoDatabase, ILogger<WordMongoService> logger)
         {
             this.wordsDatabase = mongoDatabase.GetCollection<Word>("Words");
-            this.rankingDatabase = mongoDatabase.GetCollection<Ranking>("Ranking");
             this.logger = logger;
         }
 
@@ -76,41 +73,6 @@ namespace Nexinho.Services
                 var filter2 = Builders<Word>.Filter.Eq(w => w.Id, word.Id);
                 await this.wordsDatabase.ReplaceOneAsync(filter2, word, new ReplaceOptions { IsUpsert = true });
             }
-        }
-
-        public async Task<Ranking> Get()
-        {
-            var filter = Builders<Ranking>.Filter.Eq(w => w.Id, $"{DateTime.Now.Year}-{DateTime.Now.Month}");
-
-            try
-            {
-                var current = await this.rankingDatabase.Find(filter).FirstOrDefaultAsync();
-
-                if (current == null)
-                {
-                    var ranking = new Ranking { Id = $"{DateTime.Now.Year}-{DateTime.Now.Month}", Ranks = new List<Rank>() };
-
-                    await this.rankingDatabase.InsertOneAsync(ranking);
-
-                    return ranking;
-                }
-
-                return current;
-            }
-            catch (Exception ex)
-            {
-                logger.LogCritical(ex.Message);
-
-                return null;
-            }
-        }
-
-        public async Task Update(Ranking rank)
-        {
-            var filter = Builders<Ranking>.Filter.Eq(w => w.Id, rank.Id);
-            var update = Builders<Ranking>.Update.Set(r => r.Ranks, rank.Ranks);
-
-            await this.rankingDatabase.UpdateOneAsync(filter, update);
         }
     }
 }

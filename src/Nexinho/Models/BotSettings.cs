@@ -1,5 +1,5 @@
-﻿namespace Nexinho.Models
-{
+﻿namespace Nexinho.Models;
+
     public class BotSettings
     {
         public string MongoConnection { get; set; }
@@ -10,4 +10,3 @@
 
         public string CommandPrefix { get; set; }
     }
-}

@@ -3,20 +3,19 @@ using System.Threading.Tasks;
 using DSharpPlus;
 using Microsoft.Extensions.Hosting;
 
-namespace Nexinho
-{
+namespace Nexinho;
+
     public class DiscordWorker : BackgroundService
     {
-        private readonly DiscordClient discordClient;
+        private readonly DiscordClient _discordClient;
 
         public DiscordWorker(DiscordClient discordClient)
         {
-            this.discordClient = discordClient;
+            _discordClient = discordClient;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await discordClient.ConnectAsync();
+            await _discordClient.ConnectAsync();
         }
     }
-}

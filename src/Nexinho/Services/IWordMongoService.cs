@@ -1,22 +1,17 @@
 ﻿using System.Threading.Tasks;
 using Nexinho.Models;
 
-namespace Nexinho.Services
+namespace Nexinho.Services;
+
+public interface IWordMongoService
 {
-    public interface IWordMongoService
-    {
-        Task<Word> GetCurrent();
+    Task<Word> GetCurrent();
 
-        Task<Word> GetNext();
+    Task<Word> GetNext();
 
-        Task<bool> InsertWord(Word word);
+    Task<bool> InsertWord(Word word);
 
-        Task UpdateWord(Word word);
+    Task UpdateWord(Word word);
 
-        Task Reset();
-
-        Task Update(Ranking rank);
-
-        Task<Ranking> Get();
-    }
+    Task Reset();
 }
