@@ -352,3 +352,5 @@ MigrationBackup/
 .DS_Store
 
 .env
+
+appsettings.PROD.json
