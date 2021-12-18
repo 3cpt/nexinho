@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Nexinho.Models;
 
-namespace Nexinho.Services;
+namespace Nexinho.Repositories;
 
 public class RankMongoService
 {
@@ -18,19 +19,43 @@ public class RankMongoService
         _logger = logger;
     }
 
-    public async Task Update(Ranking rank)
+    public async Task Update(Ranking ranking)
     {
-        var filter = Builders<Ranking>.Filter.Eq(w => w.Id, rank.Id);
-        var update = Builders<Ranking>.Update.Set(r => r.Ranks, rank.Ranks);
+        var filter = Builders<Ranking>.Filter.Eq(w => w.Id, ranking.Id);
+        var update = Builders<Ranking>.Update.Set(r => r.Ranks, ranking.Ranks);
 
         await _rankingDatabase.UpdateOneAsync(filter, update);
 
-        _logger.LogInformation("rank updated", rank);
+        _logger.LogInformation("ranking updated", ranking);
+    }
+
+    public async Task SetRank(RankCategory category, string username, int points)
+    {
+        var ranking = await GetOrSet(category);
+
+        if (ranking.Ranks.Any(r => r.Username == username))
+        {
+            ranking.Ranks.First(r => r.Username == username).Points += points;
+
+            _logger.LogInformation("ranked user found", ranking);
+        }
+        else
+        {
+            ranking.Ranks.Add(new Rank
+            {
+                Username = username,
+                Points = points
+            });
+
+            _logger.LogInformation("ranked user created", ranking);
+        }
+
+        await Update(ranking);
     }
 
     public async Task<Ranking> GetOrSet(RankCategory category)
     {
-        var filter = Builders<Ranking>.Filter.Eq(w => w.Id, $"{category.ToString()}-{DateTime.Now.Year}-{DateTime.Now.Month}");
+        var filter = Builders<Ranking>.Filter.Eq(w => w.Id, GenerateId(category));
 
         try
         {
@@ -40,7 +65,7 @@ public class RankMongoService
             {
                 var ranking = new Ranking
                 {
-                    Id = $"{DateTime.Now.Year}-{DateTime.Now.Month}",
+                    Id = GenerateId(category),
                     Category = category,
                     Ranks = new List<Rank>()
                 };
@@ -62,5 +87,10 @@ public class RankMongoService
 
             return null;
         }
+    }
+
+    private string GenerateId(RankCategory category)
+    {
+        return $"{category.ToString()}-{DateTime.Now.Year}-{DateTime.Now.Month}";
     }
 }

@@ -7,8 +7,10 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Extensions;
+using Nexinho.Extensions;
+using Nexinho.Gateways;
 using Nexinho.Models;
-using Nexinho.Services;
+using Nexinho.Repositories;
 
 namespace Nexinho.Commands
 {

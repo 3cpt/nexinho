@@ -7,7 +7,9 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using Nexinho.Models;
-using Nexinho.Services;
+using Nexinho.Repositories;
+using Nexinho.Extensions;
+using System.Collections.Generic;
 
 namespace Nexinho.Commands;
 
@@ -19,15 +21,17 @@ public class RankModule : BaseCommandModule
     [Command("rank")]
     public async Task RankingCommand(CommandContext ctx)
     {
-        await MessageHelper.SendMessageAsync(ctx, "Escreve `rank Words` ou `rank Trivia`");
+        await ctx.SendMessage("Escreve `rank Words` ou `rank Trivia`");
     }
 
     [Command("rank")]
     public async Task RankingCommand(CommandContext ctx, string type)
     {
+        type = type.Substring(0, 1).ToUpper() + type.Substring(1);
+
         if (!Enum.TryParse(type, out RankCategory rankCategory))
         {
-            await MessageHelper.SendMessageAsync(ctx, "Escreve `rank Words` ou `rank Trivia`");
+            await ctx.SendMessage("Escreve `rank Words` ou `rank Trivia`");
         }
         else
         {
@@ -35,17 +39,17 @@ public class RankModule : BaseCommandModule
 
             if (ranking == null)
             {
-                await MessageHelper.SendMessageAsync(ctx, "Ops, não há ranking");
+                await ctx.SendMessage("Ops, não há ranking");
             }
             else
             {
                 var sb = new StringBuilder();
-                var sortedEmojis = new SortedList();
+                var sortedEmojis = new Dictionary<int, DiscordEmoji>();
 
-                sortedEmojis.Add(1, DiscordEmoji.FromName(ctx.Client, ":first_place:"));
-                sortedEmojis.Add(2, DiscordEmoji.FromName(ctx.Client, ":second_place:"));
-                sortedEmojis.Add(3, DiscordEmoji.FromName(ctx.Client, ":third_place:"));
-                sortedEmojis.Add(4, DiscordEmoji.FromName(ctx.Client, ":thumbsdown:"));
+                sortedEmojis.Add(0, DiscordEmoji.FromName(ctx.Client, ":first_place:"));
+                sortedEmojis.Add(1, DiscordEmoji.FromName(ctx.Client, ":second_place:"));
+                sortedEmojis.Add(2, DiscordEmoji.FromName(ctx.Client, ":third_place:"));
+                sortedEmojis.Add(3, DiscordEmoji.FromName(ctx.Client, ":thumbsdown:"));
 
                 sb.AppendLine($"{ranking.Id}");
 
@@ -69,11 +73,11 @@ public class RankModule : BaseCommandModule
                             currentIndex = i;
                         }
 
-                        sb.AppendLine($"{sortedEmojis[currentIndex]} - {sorted[i].Username} - {sorted[i].Points} pontos");
+                        sb.AppendLine($"{sortedEmojis.GetValueOrDefault(currentIndex)} - {sorted[i].Username} - {sorted[i].Points} pontos");
                     }
                 }
 
-                await MessageHelper.SendMessageAsync(ctx, sb.ToString());
+                await ctx.SendMessage(sb.ToString());
             }
         }
     }
