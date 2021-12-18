@@ -8,6 +8,8 @@ namespace Nexinho.Models
         [BsonId]
         public string Id { get; set; }
 
+        public RankCategory Category { get; set; }
+
         public List<Rank> Ranks { get; set; }
     }
 
@@ -16,5 +18,11 @@ namespace Nexinho.Models
         public string Username { get; set; }
 
         public int Points { get; set; }
+    }
+
+    public enum RankCategory
+    {
+        Words = 1,
+        Trivia = 2
     }
 }

@@ -85,13 +85,13 @@ namespace Nexinho.Commands
                     var points = GetPoints(currentTrivia.Difficulty);
 
                     var pointsString = points > 1 ? "points" : "point";
-                    await ctx.RespondAsync($"wow, it's right. {points} {pointsString} ({currentTrivia.Difficulty}) to {ctx.Message.Author.Mention}");
+                    await ctx.RespondAsync($"wow, it's right. {points} {pointsString} ({currentTrivia.Difficulty}) to {response.Result.Message.Author.Mention}");
 
-                    await UpdateRank(ctx.User.Username, points);
+                    await UpdateRank(response.Result.User.Username, points);
                 }
                 else
                 {
-                    await ctx.RespondAsync($"nope {ctx.Message.Author.Mention}");
+                    await ctx.RespondAsync($"nope {response.Result.User.Mention}");
                 }
 
                 await message.ModifyAsync(new DiscordMessageBuilder()
