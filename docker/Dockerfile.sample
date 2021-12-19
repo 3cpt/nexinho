@@ -3,11 +3,11 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0-focal AS build
 WORKDIR /source
 
 # copy csproj and restore as distinct layers
-COPY *.csproj .
+COPY ../src/Nexinho/*.csproj .
 RUN dotnet restore -r linux-x64
 
 # copy and publish app and libraries
-COPY . .
+COPY ../src/Nexinho/ .
 RUN dotnet publish -c release -o /app -r linux-x64 --self-contained false --no-restore /restore
 
 # final stage/image
